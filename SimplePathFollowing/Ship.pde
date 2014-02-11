@@ -26,6 +26,7 @@ class Ship extends GameEntity
     
     float speed = 50f;
     PVector toDest = waypoints.get(current).get();
+    println(current);
     toDest.sub(position);
     float distance = toDest.mag();    
     if (distance < 1.0f)

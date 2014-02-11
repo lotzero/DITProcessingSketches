@@ -23,11 +23,11 @@ void printText(String text)
 }
 
 
-static SimplePathFollowing  _instance;
+static FallingShip  _instance;
 
 static boolean[] keys = new boolean[526];
 ArrayList<GameEntity> children = new ArrayList<GameEntity>();
-static SimplePathFollowing instance()
+static FallingShip instance()
 {
   return _instance;
 }
