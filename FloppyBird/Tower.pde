@@ -4,11 +4,13 @@ class Tower extends GameEntity
   float gapHeight = 100;
   float towerWidth = 60;
   boolean scored;
+  Bounds topBounds = new Bounds();
+  Bounds bottomBounds = new Bounds();
   
   Tower()
   {
     velocity = new PVector(-50, 0);
-    randomiseGap();
+    reset();
     position.x = width;
     position.y = 0;
   }
@@ -18,51 +20,56 @@ class Tower extends GameEntity
     position.add(PVector.mult(velocity, timeDelta));
     if (position.x < - (towerWidth / 2.0f))
     {
-      randomiseGap();    
-      position.x = width + (towerWidth / 2.0f);
+      reset();          
     }    
+    
+    topBounds.tl.x = position.x - (towerWidth / 2.0f);
+    topBounds.tl.y = 0;
+    topBounds.w = towerWidth;
+    topBounds.h = gap - (gapHeight / 2);
+    
+    bottomBounds.tl.x = position.x - (towerWidth / 2.0f);
+    bottomBounds.tl.y = gap + (gapHeight / 2);
+    bottomBounds.w = towerWidth;
+    bottomBounds.h = height - (gap + (gapHeight / 2));    
   }
   
-  void randomiseGap()
+  boolean intersects(Bounds b)
   {
+    return (topBounds.intersects(b) || bottomBounds.intersects(b));
+  }
+  
+  void reset()
+  {
+    position.x = width + (towerWidth / 2.0f);
     gap = random(50, height - 50);    
     scored = false;
   }
   
-  boolean circleCollides(PVector centre, float radius)
+  boolean checkScore(Bounds b)
   {
-    float left = position.x - (towerWidth / 2);
     float right = position.x + (towerWidth / 2);
-    if ((centre.x + radius) < left)
+    
+    if ((b.tl.x > right) && (! scored))
     {
-      return false;
+      scored = true;
+      return true;
     }
     
-    if ((centre.x - radius) > right)
-    {
-      return false;
-    }
-    
-    float top = gap - (gapHeight / 2);
-    float bottom = gap + (gapHeight / 2);
-    
-    if (((centre.y - radius) > top) && ((centre.y + radius) < bottom))
-    {
-      return false;
-    }
-    
-    return true;       
+    return false;
   }
-  
   
   void draw()
   {
     pushMatrix();
     translate(position.x, position.y);
     fill(255);
-    stroke(0);
+    stroke(0, 0, 255);
     rect(-(towerWidth / 2), height, towerWidth, - (height - (gap + gapHeight / 2)));
     rect(-(towerWidth / 2), 0, towerWidth, gap - (gapHeight / 2));
     popMatrix();  
+    
+    //topBounds.draw();
+    //bottomBounds.draw();
   }
 }

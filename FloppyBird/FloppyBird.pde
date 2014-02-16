@@ -1,23 +1,27 @@
+import ddf.minim.*;
+
 void setup()
 {
   _instance = this;
 
+  minim = new Minim(FloppyBird.instance());
+  deadSound = minim.loadFile("Dead.wav", 2048);  
+  scoreSound = minim.loadFile("Pickup_Coin4.wav", 2048);  
   size(300, 400);
   
-  font = createFont("Arial",16,true);  
+  font = loadFont("ComicSansMS-16.vlw");
+  textFont(font, 16);
   bird = new Bird();
   children.add(bird);
-  bird.position.x = 100;
-  bird.position.y = 200;
   
-  Tower t = new Tower();
-  children.add(t);
-  towers.add(t);
-  
-  t = new Tower();
-  children.add(t);
-  t.position.x = width + 180.0f;
-  towers.add(t);
+  for (int i = 0 ; i < numTowers ; i ++)
+  {
+    Tower t = new Tower();   
+    towers.add(t);
+    children.add(t);
+  }
+   
+  reset();
   
   for (int i = children.size()-1; i >= 0; i--) 
   {
@@ -29,18 +33,35 @@ void setup()
 PFont font;
 int count = 0;
 int score = 0;
+int numTowers = 2;
 
-void printText(String text)
+AudioPlayer deadSound;
+AudioPlayer scoreSound;
+Minim minim;//audio context
+
+static void printText(String text)
 {
-  text(text, 5, 20 + (count * 20));
-  count ++;
+  instance().messages.add(text);  
 }
+
+void printAllMessages()
+{
+  stroke(0);
+  fill(0);
+  for (int i = 0 ; i < messages.size() ; i ++)
+  {    
+    text(messages.get(i), 5, 20 + (i * 20));
+  }
+  messages.clear();  
+}
+
 
 static FloppyBird _instance;
 
 static boolean[] keys = new boolean[526];
 ArrayList<GameEntity> children = new ArrayList<GameEntity>();
 ArrayList<Tower> towers = new ArrayList<Tower>();
+ArrayList<String> messages = new ArrayList<String>();
 Bird bird;
 int gameState = 0;
 
@@ -49,14 +70,29 @@ static FloppyBird instance()
   return _instance;
 }
 
+void reset()
+{
+  for (int i = 0 ; i < numTowers ; i ++)
+  {
+    towers.get(i).position.x = width + ( i * 180);
+  }
+  
+  bird.position.x = 100;
+  bird.position.y = 200;
+  bird.velocity.x = bird.velocity.y = 0.0f;
+  score = 0;
+  gameState = 0;
+}
+
 void draw()
 {
   background(255);
   
   if (gameState == 0)
   {
-    printText("Press space key to start");
-    if (checkKey(' '))
+    printText("Floppy Bird");
+    printText("Press s key to start");
+    if (checkKey('S'))
     {
       gameState = 1;
     }
@@ -64,9 +100,10 @@ void draw()
   if (gameState == 2)
   {
     printText("Game over!");
-    printText("Press space key to start");
-    if (checkKey(' '))
+    printText("Press s key to start");
+    if (checkKey('S'))
     {
+      reset();
       gameState = 1;
     }
   }
@@ -84,20 +121,25 @@ void draw()
       children.remove(i);
     }
   }
-  checkCollisions();
+  if (gameState == 1)
+  {
+    checkScores();
+    checkCollisions();
+  }
   printText("Score: " + score);
-  count = 0;
+  printAllMessages();
 }
 
-void checkScore()
+void checkScores()
 {
   for (int i = 0 ; i < towers.size() ; i ++)
   {
     Tower tower = towers.get(i);
-    if (tower.circleCollides(bird.position, bird.radius))
+    if (tower.checkScore(bird.bounds))
     {
-      collision = true;
-      break;
+      scoreSound.rewind();
+      scoreSound.play();
+      score ++;
     }     
   }
 }
@@ -108,16 +150,29 @@ void checkCollisions()
   for (int i = 0 ; i < towers.size() ; i ++)
   {
     Tower tower = towers.get(i);
-    if (tower.circleCollides(bird.position, bird.radius))
+    if (tower.intersects(bird.bounds))
     {
       collision = true;
       break;
     }     
   }
+  
+  if ((bird.bounds.tl.y + bird.bounds.h) > height)
+  {
+    collision = true;
+  } 
+  
+  if ((bird.bounds.tl.y) < 0)
+  {
+    collision = true;
+  } 
+  
   if (collision)
   {
+    deadSound.rewind();
+    deadSound.play();
     gameState = 2;
-  }
+  }  
 }
 
 static boolean checkKey(int k)

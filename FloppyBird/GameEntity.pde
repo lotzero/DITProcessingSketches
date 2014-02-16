@@ -17,6 +17,8 @@ class GameEntity
   float mass;
   PVector basis = new PVector(0, -1);
   
+  
+  
   GameEntity()
   {
     position = new PVector();
@@ -43,6 +45,7 @@ class GameEntity
     right.y = -cos(theta + HALF_PI);  
     
     
+        
     // Could also use this:
     //look = PVector.fromAngle(theta - HALF_PI);
     //right = PVector.fromAngle(theta);
