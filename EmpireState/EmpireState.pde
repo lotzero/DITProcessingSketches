@@ -36,6 +36,7 @@ void draw()
   fill(255);
   stroke(255);
   textFont(font,16);
+  
   // Draw the Building
   rect(100.0f, (float) height, 50.0f, - buildingHeight);
   
@@ -53,10 +54,12 @@ void draw()
   
   count = 0;
   printText("Predicted Time: " + predictedTime);
+  
   printText("Predicted Velocity: " + predictedVelocity);
   printText("Coin Velocity: " + coinVelocity);
   printText("Coin Height: " + (coinPos.y));
   printText("Time: " + timeAcc);
+
   
 }
 

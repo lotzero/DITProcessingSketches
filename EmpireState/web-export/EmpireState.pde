@@ -13,7 +13,7 @@ PVector predictedVelocity;
 void printText(String text)
 {
   fill(255);  
-  text(text, 5, 20 + (count * 20));
+  //text(text, 5, 20 + (count * 20));
   count ++;
 }
 
@@ -25,17 +25,21 @@ void setup()
     
     predictedTime = sqrt(buildingHeight / 4.9f);    
     predictedVelocity = PVector.mult(gravity, predictedTime);
+    println("Got here 1");
 }
 
 float timeAcc = 0;
 
 void draw()
 {
+  println("Got here 2");
   
   background(0);
   fill(255);
   stroke(255);
   textFont(font,16);
+  println("Got here 2");
+  
   // Draw the Building
   rect(100.0f, (float) height, 50.0f, - buildingHeight);
   
@@ -50,13 +54,17 @@ void draw()
   // Draw the coin
   fill(0);
   ellipse(coinPos.x, height - coinPos.y, 10, 10);  
+  println("Got here 3");
   
   count = 0;
   printText("Predicted Time: " + predictedTime);
+    println("Got here 4");
+
   printText("Predicted Velocity: " + predictedVelocity);
   printText("Coin Velocity: " + coinVelocity);
   printText("Coin Height: " + (coinPos.y));
   printText("Time: " + timeAcc);
+
   
 }
 
