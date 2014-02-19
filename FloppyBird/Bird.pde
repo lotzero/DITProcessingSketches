@@ -3,7 +3,6 @@ import ddf.minim.*;
 class Bird extends GameEntity
 {
   PVector gravity = new PVector(0, 200.0f);
-  float mass = 1.0f;
   PVector force = new PVector();
   boolean lastPressed = false;
   AudioPlayer flySound;
@@ -15,6 +14,7 @@ class Bird extends GameEntity
     flySound = FloppyBird.instance().minim.loadFile("Jump17.wav", 2048);    
     w = 20;
     h = 20;
+    mass = 1;
   }
   
   void update()
